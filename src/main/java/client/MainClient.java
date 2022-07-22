@@ -2,7 +2,7 @@ package client;
 
 public class MainClient {
 
-    static final int THREADS_QUANTITY = 4;
+    static final int THREADS_QUANTITY = 3;
 
     public static void main(String[] args) {
 

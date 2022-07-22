@@ -8,7 +8,7 @@ public class MainServer {
 
     static final int THREADS_QUANTITY = 6;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Server server = new Server("localhost", "src/main/java/universal/settings.txt",
                 "src/main/java/server/file.log");
         try {

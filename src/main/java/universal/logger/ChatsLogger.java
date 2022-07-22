@@ -19,7 +19,7 @@ public class ChatsLogger implements Logger {
 
     public void log(String msg, String fileName) {
         try (BufferedWriter bfWriter = new BufferedWriter(new FileWriter(fileName, true))) {
-            bfWriter.write( msg + "\n");
+            bfWriter.write(msg + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
