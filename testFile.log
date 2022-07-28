@@ -8,3 +8,11 @@ null: Привет
 null: Привет
 Приложение сетевой чат запущено
 null: Привет
+Приложение сетевой чат запущено
+null: Катя: Привет
+Приложение сетевой чат запущено
+Ошибка при подключении к серверу: 'java.net.ConnectException: Connection refused: connect' 23:50:28.978803100
+Приложение сетевой чат запущено
+null: Привет
+Успешное подключение клиента 'java.nio.channels.SocketChannel[connected local=/127.0.0.1:8080 remote=/127.0.0.1:63100]' к серверу!
+Успешное подключение клиента 'java.nio.channels.SocketChannel[connected local=/127.0.0.1:8080 remote=/127.0.0.1:63101]' к серверу!
