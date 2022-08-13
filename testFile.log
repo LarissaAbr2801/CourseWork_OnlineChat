@@ -16,3 +16,5 @@ null: Катя: Привет
 null: Привет
 Успешное подключение клиента 'java.nio.channels.SocketChannel[connected local=/127.0.0.1:8080 remote=/127.0.0.1:63100]' к серверу!
 Успешное подключение клиента 'java.nio.channels.SocketChannel[connected local=/127.0.0.1:8080 remote=/127.0.0.1:63101]' к серверу!
+Успешное подключение клиента 'java.nio.channels.SocketChannel[connected local=/127.0.0.1:8080 remote=/127.0.0.1:65281]' к серверу!
+Успешное подключение клиента 'java.nio.channels.SocketChannel[connected local=/127.0.0.1:8080 remote=/127.0.0.1:65280]' к серверу!
