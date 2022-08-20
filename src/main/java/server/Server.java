@@ -7,15 +7,20 @@ import universal.reader.SettingsFileReader;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server {
+
+    private static final String COMMAND_TO_EXIT = "/exit";
 
     private final String host;
     private final int port;
@@ -52,6 +57,10 @@ public class Server {
             logger.log(String.format("Успешное подключение клиента '%s' к серверу!", socketChannel),
                     fileNameForLog);
             readMessage(socketChannel);
+        } catch (SocketException e) {
+            String exception = "Соединение с клиентом прервано!";
+            System.out.println(exception);
+            logger.log(exception, fileNameForLog);
         } catch (IOException e) {
             e.printStackTrace();
             logger.log(String.format("Ошибка при подключении клиента к серверу '%s' %s",
@@ -61,6 +70,7 @@ public class Server {
     }
 
     public void readMessage(SocketChannel socketChannel) throws IOException {
+
         final ByteBuffer inputBuffer = ByteBuffer.allocate(2 << 10);
 
         while (socketChannel.isConnected()) {
@@ -75,20 +85,22 @@ public class Server {
             clientName = info[0];
             final String msg = info[1];
 
-            if (msg.equals("/exit")) {
-                clients.remove(socketChannel);
+            if (msg.equals(COMMAND_TO_EXIT)) {
+                socketChannel.write(ByteBuffer.wrap((String.format(COMMAND_TO_EXIT).getBytes(StandardCharsets.UTF_8))));
+                break;
             }
 
             logger.log(String.format("Сообщение '%s' от пользователя '%s'  отправлено в %s",
                     msg, clientName, LocalTime.now()), fileNameForLog);
 
             inputBuffer.clear();
-            sendMessageToAllClients(socketChannel, msg);
+
+            new Thread(() -> sendMessageToAllClients(socketChannel, msg)).start();
         }
     }
 
     public void sendMessageToAllClients(SocketChannel socketChannel, String msg) {
-        if (clients.size() > 1) {
+        try {
             clients.stream()
                     .filter(client -> !client.equals(socketChannel))
                     .forEach(client -> {
@@ -97,18 +109,15 @@ public class Server {
                                             clientName, msg)
                                     .getBytes(StandardCharsets.UTF_8))));
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            String exception = "Отправка сообщений недоступна по причине отсутствия других клиентов!";
+                            System.out.println(exception);
+                            logger.log(exception, fileNameForLog);
                         }
                     });
-        } else {
-            clients.forEach(client -> {
-                try {
-                    client.write(ByteBuffer.wrap(("Нет новых сообщений")
-                            .getBytes(StandardCharsets.UTF_8)));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+        } catch (Throwable e) {
+            System.out.println("Ошибка при записи сообщения!");
+            System.out.println(e);
+            logger.log(e.toString(), fileNameForLog);
         }
     }
 }

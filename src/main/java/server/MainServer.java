@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 
 public class MainServer {
 
-    static final int THREADS_QUANTITY = 6;
+    static final int THREADS_QUANTITY = 4;
 
     public static void main(String[] args) throws IOException {
         Server server = new Server("localhost", "src/main/java/universal/settings.txt",

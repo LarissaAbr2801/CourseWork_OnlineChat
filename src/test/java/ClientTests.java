@@ -8,10 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalTime;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -26,12 +24,12 @@ public class ClientTests {
     static ExecutorService executorService;
 
     @BeforeAll
-    public static void initAll() throws IOException {
+    public static void initAll() {
         executorService = Executors.newFixedThreadPool(2);
         client = new Client(host,
                 "src/main/java/universal/settings.txt",
                 file.getName());
-        client.start();
+
     }
 
     @BeforeEach
@@ -53,14 +51,36 @@ public class ClientTests {
 
     @ParameterizedTest
     @MethodSource("sourceWriteMessage")
-    void testWriteMessage(String msg, String expected) throws ExecutionException, InterruptedException {
-        //String result = executorService.submit(() -> client.writeMessage(new Scanner(msg))).get();
+    void testWriteMessage(String msg, String expected) throws IOException {
+        client.writeMessage(new Scanner(msg));
 
-        //Assertions.assertEquals(result, expected);
+        InetSocketAddress socketAddress = new InetSocketAddress(host, 8080);
+
+        SocketChannel socketChannel = SocketChannel.open();
+        socketChannel.connect(socketAddress);
+        final ByteBuffer inputBuffer = ByteBuffer.allocate(2 << 10);
+
+        int bytesCount = socketChannel.read(inputBuffer);
+
+        msg = new String(inputBuffer.array(), 0, bytesCount,
+                StandardCharsets.UTF_8);
+
+        String result = msg;
+
+        Assertions.assertEquals(result, expected);
     }
 
     private static Stream<Arguments> sourceWriteMessage() {
         return Stream.of(Arguments.of("Привет", "Привет"));
     }
 
+    void testReadMessage(String msg, String expected) throws ExecutionException, InterruptedException {
+        //String result = executorService.submit(() -> client.writeMessage(new Scanner(msg))).get();
+
+        //Assertions.assertEquals(result, expected);
+    }
+
+    private static Stream<Arguments> sourceReadMessage() {
+        return Stream.of(Arguments.of("Привет", "Привет"));
+    }
 }

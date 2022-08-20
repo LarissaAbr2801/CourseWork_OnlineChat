@@ -18,3 +18,8 @@ null: Привет
 Успешное подключение клиента 'java.nio.channels.SocketChannel[connected local=/127.0.0.1:8080 remote=/127.0.0.1:63101]' к серверу!
 Успешное подключение клиента 'java.nio.channels.SocketChannel[connected local=/127.0.0.1:8080 remote=/127.0.0.1:65281]' к серверу!
 Успешное подключение клиента 'java.nio.channels.SocketChannel[connected local=/127.0.0.1:8080 remote=/127.0.0.1:65280]' к серверу!
+Приложение сетевой чат запущено
+Ошибка при подключении к серверу: 'java.net.ConnectException: Connection refused: connect' 18:18:59.784915500
+java.nio.channels.ClosedChannelException
+Приложение сетевой чат запущено
+Приложение сетевой чат запущено

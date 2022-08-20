@@ -12,8 +12,6 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 
 public class Client {
 
@@ -56,6 +54,7 @@ public class Client {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            logger.log(e.toString(), fileNameForLog);
         }
     }
 
@@ -72,7 +71,7 @@ public class Client {
 
         new Thread(() -> readMessage(inputBuffer)).start();
 
-        new Thread(() -> writeMessage(scanner)).start();
+        writeMessage(scanner);
 
     }
 
@@ -80,7 +79,7 @@ public class Client {
         while (isWorking) {
             try {
                 System.out.println(getName() + ", введите сообщение:");
-                String msg = scanner.nextLine();
+                final String msg = scanner.nextLine();
 
                 if (msg.equals(COMMAND_TO_EXIT)) {
                     isWorking = false;
@@ -91,6 +90,7 @@ public class Client {
                 logger.log(getName() + ": " + msg, fileNameForLog);
             } catch (IOException e) {
                 e.printStackTrace();
+                logger.log(e.toString(), fileNameForLog);
             }
         }
     }
@@ -99,10 +99,14 @@ public class Client {
         while (isWorking) {
             try {
                 String msg;
+                System.out.println(isWorking);
                 int bytesCount = socketChannel.read(inputBuffer);
 
                 msg = new String(inputBuffer.array(), 0, bytesCount,
                         StandardCharsets.UTF_8);
+
+                if (msg.equals(COMMAND_TO_EXIT)) break;
+
                 System.out.println(msg);
                 logger.log(String.format("У пользователя '%s': '%s'",
                         name, msg), fileNameForLog);
@@ -110,6 +114,7 @@ public class Client {
                 inputBuffer.clear();
             } catch (IOException e) {
                 e.printStackTrace();
+                logger.log(e.toString(), fileNameForLog);
             }
         }
     }
